@@ -1,6 +1,5 @@
 package pl.com.it_crowd.seam.framework;
 
-import org.jboss.seam.solder.el.Expressions;
 import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.Transactional;
@@ -21,8 +20,7 @@ import java.util.Map;
  *
  * @author Gavin King
  */
-@SuppressWarnings({"ManagedBeanInconsistencyInspection"})
-public class EntityQuery<E> extends Query<EntityManager, E> {
+public abstract class EntityQuery<E> extends Query<EntityManager, E> {
 // ------------------------------ FIELDS ------------------------------
 
     @Inject
@@ -254,30 +252,55 @@ public class EntityQuery<E> extends Query<EntityManager, E> {
 
 // -------------------------- INNER CLASSES --------------------------
 
-    public static class MyExpressions extends Expressions {
+    public static class MyExpressions {
+// ------------------------------ FIELDS ------------------------------
+
+        private ELContext elContext;
+
+        private ExpressionFactory expressionFactory;
+
 // --------------------------- CONSTRUCTORS ---------------------------
 
         /**
          * Create a new instance of the {@link org.jboss.seam.solder.el.Expressions} class, providing the
          * {@link javax.el.ELContext} and {@link javax.el.ExpressionFactory} to be used.
          *
-         * @param context           the {@link javax.el.ELContext} against which to operate
+         * @param elContext           the {@link javax.el.ELContext} against which to operate
          * @param expressionFactory the {@link javax.el.ExpressionFactory} to use
          *
          * @throws IllegalArgumentException if <code>context</code> is null or
          *                                  <code>expressionFactory</code> is null
          */
         @Inject
-        public MyExpressions(ELContext context, ExpressionFactory expressionFactory)
+        public MyExpressions(ELContext elContext, ExpressionFactory expressionFactory)
         {
-            super(context, expressionFactory);
+            if (elContext == null) {
+                throw new IllegalArgumentException("context must not be null");
+            }
+            if (expressionFactory == null) {
+                throw new IllegalArgumentException("expressionFactory must not be null");
+            }
+            this.elContext = elContext;
+            this.expressionFactory = expressionFactory;
+        }
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+        public ELContext getElContext()
+        {
+            return elContext;
+        }
+
+        public ExpressionFactory getExpressionFactory()
+        {
+            return expressionFactory;
         }
 
 // -------------------------- OTHER METHODS --------------------------
 
         public ValueExpression createValueExpression(String expression)
         {
-            return this.getExpressionFactory().createValueExpression(getELContext(), expression, Object.class);
+            return this.getExpressionFactory().createValueExpression(getElContext(), expression, Object.class);
         }
     }
 }
