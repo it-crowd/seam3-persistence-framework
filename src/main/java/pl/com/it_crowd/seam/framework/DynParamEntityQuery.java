@@ -8,16 +8,16 @@ import java.util.List;
 public class DynParamEntityQuery<E> extends EntityQuery<E> {
 // ------------------------------ FIELDS ------------------------------
 
-    private List<AbstractCondition> conditions;
+    private List<? extends AbstractCondition> conditions;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    public List<AbstractCondition> getConditions()
+    public List<? extends AbstractCondition> getConditions()
     {
         return conditions;
     }
 
-    public void setConditions(List<AbstractCondition> conditions)
+    public void setConditions(List<? extends AbstractCondition> conditions)
     {
         this.conditions = conditions;
     }
@@ -71,7 +71,7 @@ public class DynParamEntityQuery<E> extends EntityQuery<E> {
         }
     }
 
-    private boolean isAnyConditionParameterDirty()
+    protected boolean isAnyConditionParameterDirty()
     {
         if (conditions != null) {
             for (AbstractCondition condition : conditions) {
@@ -90,7 +90,7 @@ public class DynParamEntityQuery<E> extends EntityQuery<E> {
         return super.isAnyParameterDirty() || isAnyConditionParameterDirty();
     }
 
-    private void setParameters(Query query)
+    protected void setParameters(Query query)
     {
         if (conditions != null) {
             for (AbstractCondition condition : conditions) {
