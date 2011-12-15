@@ -128,6 +128,17 @@ public abstract class Query<T, E> {
         return groupBy;
     }
 
+    /**
+     * Group by used in count ejbql. By default it's "distinct " + #getGroupBy but if there is more than one column it may be overriden.
+     *
+     * @return group by part for count ejbql
+     */
+    protected String getCountGroupBy()
+    {
+        String by = getGroupBy();
+        return by == null ? null : "distinct " + by;
+    }
+
     public void setGroupBy(String groupBy)
     {
         this.groupBy = groupBy;
@@ -586,8 +597,8 @@ public abstract class Query<T, E> {
         int whereLoc = whereMatcher.find() ? whereMatcher.start(1) : groupLoc;
 
         String subject;
-        if (getGroupBy() != null) {
-            subject = "distinct " + getGroupBy();
+        if (getCountGroupBy() != null) {
+            subject = getCountGroupBy();
         } else if (useWildcardAsCountQuerySubject) {
             subject = "*";
         } else {
