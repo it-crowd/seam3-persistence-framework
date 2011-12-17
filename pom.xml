@@ -83,6 +83,11 @@
     </build>
 
     <distributionManagement>
+        <repository>
+            <id>it-crowd.com.pl</id>
+            <name>MyCo Internal Repository</name>
+            <url>http://artifactory.it-crowd.com.pl/libs-release-local</url>
+        </repository>
         <snapshotRepository>
             <id>it-crowd.com.pl</id>
             <name>MyCo Internal Repository</name>
