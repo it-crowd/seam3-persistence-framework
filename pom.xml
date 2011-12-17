@@ -4,7 +4,7 @@
 
     <groupId>pl.com.it-crowd</groupId>
     <artifactId>seam3-persistence-framework</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -95,7 +95,7 @@
     </distributionManagement>
 
     <scm>
-        <developerConnection>scm:svn:https://it-crowd.com.pl/svn/seam3-persistence-framework/tags/seam3-persistence-framework-1.0.0</developerConnection>
+        <developerConnection>scm:svn:https://it-crowd.com.pl/svn/seam3-persistence-framework/trunk</developerConnection>
     </scm>
 
 </project>
