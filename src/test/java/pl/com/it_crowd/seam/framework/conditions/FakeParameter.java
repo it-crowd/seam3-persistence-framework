@@ -1,6 +1,6 @@
 package pl.com.it_crowd.seam.framework.conditions;
 
-public class FakeParameter extends DynamicParameter {
+public class FakeParameter implements DynamicParameter {
 // ------------------------------ FIELDS ------------------------------
 
     private Object value;

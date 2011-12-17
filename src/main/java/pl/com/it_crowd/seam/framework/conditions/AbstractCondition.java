@@ -116,6 +116,17 @@ public abstract class AbstractCondition {
         return false;
     }
 
+    /**
+     * Tells if condition has any EJBQL to render.
+     *
+     * @return true if yes; false if nothing will be rendered
+     */
+    public boolean rendersEJBQL()
+    {
+        String renderedEJBQL = getRenderedEJBQL();
+        return renderedEJBQL != null && !"".equals(renderedEJBQL.trim());
+    }
+
     private void evaluateArgumentValues()
     {
         dynamicParams.clear();
