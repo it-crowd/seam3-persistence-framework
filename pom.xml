@@ -90,4 +90,8 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <scm>
+        <developerConnection>scm:svn:https://it-crowd.com.pl/svn/seam3-persistence-framework/trunk</developerConnection>
+    </scm>
+
 </project>
