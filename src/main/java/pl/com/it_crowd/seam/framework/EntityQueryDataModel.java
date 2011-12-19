@@ -210,9 +210,9 @@ public class EntityQueryDataModel<T> extends ExtendedDataModel<T> {
             Object id = getId(item);
             final Object key = useIndex ? i : id;
             rowKeyMap.put(key, item);
-            dataVisitor.process(facesContext, key, o);
             indexToKey.put(i, key);
             keyToIndex.put(key, i);
+            dataVisitor.process(facesContext, key, o);
             i++;
         }
     }
