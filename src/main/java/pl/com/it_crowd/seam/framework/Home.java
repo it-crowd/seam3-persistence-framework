@@ -3,7 +3,7 @@ package pl.com.it_crowd.seam.framework;
 import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.Transactional;
-import org.jboss.solder.logging.internal.Logger;
+import org.jboss.solder.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
