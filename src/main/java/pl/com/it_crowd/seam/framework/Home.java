@@ -1,9 +1,9 @@
 package pl.com.it_crowd.seam.framework;
 
-import org.jboss.logging.Logger;
 import org.jboss.seam.transaction.DefaultTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
 import org.jboss.seam.transaction.Transactional;
+import org.jboss.solder.logging.internal.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
@@ -36,6 +36,7 @@ public abstract class Home<T, E> extends MutableController<T> {
 
     private Object id;
 
+    @Inject
     private Logger log;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
@@ -140,9 +141,6 @@ public abstract class Home<T, E> extends MutableController<T> {
 
     protected Logger getLog()
     {
-        if (log == null) {
-            log = Logger.getLogger(getClass());
-        }
         return log;
     }
 
