@@ -13,6 +13,7 @@ public abstract class AbstractNullabilityCondition extends AbstractCondition {
     public AbstractNullabilityCondition(Object... args)
     {
         super(args);
+        includeNullParameters = true;
     }
 
 // --------------------- GETTER / SETTER METHODS ---------------------
@@ -35,7 +36,7 @@ public abstract class AbstractNullabilityCondition extends AbstractCondition {
     {
         StringBuilder builder = new StringBuilder();
         final String ejbqlPart = toEJBQLPart(argValues[0]);
-        builder.append(ejbqlPart == null ? "null" : ejbqlPart);
+        builder.append(ejbqlPart);
         builder.append(" ");
         builder.append(getInstructionEJBQL());
         oldEJBQL = renderedEJBQL;

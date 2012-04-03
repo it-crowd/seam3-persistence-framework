@@ -25,6 +25,8 @@ public abstract class AbstractCondition {
 
     protected String paramPrefix = "qel";
 
+    protected boolean includeNullParameters = false;
+
 // --------------------------- CONSTRUCTORS ---------------------------
 
     public AbstractCondition(Object... args)
@@ -83,7 +85,7 @@ public abstract class AbstractCondition {
     {
         final HashSet<LocalDynamicParameter> set = new HashSet<LocalDynamicParameter>();
         for (LocalDynamicParameter parameter : dynamicParams) {
-            if (parameter.value != null && (!(parameter.value instanceof Collection) || !((Collection) parameter.value).isEmpty())) {
+            if ((parameter.value != null || includeNullParameters) && (!(parameter.value instanceof Collection) || !((Collection) parameter.value).isEmpty())) {
                 set.add(parameter);
             }
         }
@@ -135,7 +137,8 @@ public abstract class AbstractCondition {
         for (int i = 0; i < args.length; i++) {
             Object o = args[i];
             if (o instanceof DynamicParameter) {
-                LocalDynamicParameter localDynamicParameter = new LocalDynamicParameter((DynamicParameter) o, paramPrefix + (localDynP++ + paramIndexOffset),
+                LocalDynamicParameter localDynamicParameter = new LocalDynamicParameter((DynamicParameter) o,
+                    paramPrefix + (localDynP++ + paramIndexOffset),
                     ((DynamicParameter) o).getValue());
                 argValues[i] = localDynamicParameter;
                 dynamicParams.add(localDynamicParameter);
@@ -167,7 +170,9 @@ public abstract class AbstractCondition {
     {
         if (o instanceof LocalDynamicParameter) {
             Object value = ((LocalDynamicParameter) o).value;
-            return value == null || (value instanceof Collection && ((Collection) value).isEmpty()) ? null : ":" + ((LocalDynamicParameter) o).name;
+            return
+                (!includeNullParameters && value == null) || (value instanceof Collection && ((Collection) value).isEmpty()) ? null :
+                    ":" + ((LocalDynamicParameter) o).name;
         } else if (o instanceof AbstractCondition) {
             ((AbstractCondition) o).renderEJBQL();
             return ((AbstractCondition) o).getRenderedEJBQL();

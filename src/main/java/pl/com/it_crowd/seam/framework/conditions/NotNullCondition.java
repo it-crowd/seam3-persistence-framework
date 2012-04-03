@@ -6,9 +6,15 @@ package pl.com.it_crowd.seam.framework.conditions;
 public class NotNullCondition extends AbstractNullabilityCondition {
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public NotNullCondition(Object arg)
+    public NotNullCondition(final Object arg)
     {
-        super(arg);
+        super(new DynamicParameter<Object>() {
+            @Override
+            public Object getValue()
+            {
+                return arg;
+            }
+        });
     }
 
     @Override

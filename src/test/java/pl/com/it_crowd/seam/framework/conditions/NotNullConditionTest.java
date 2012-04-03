@@ -13,13 +13,14 @@ public class NotNullConditionTest {
 
         condition = new NotNullCondition("");
         condition.evaluate();
-        Assert.assertEquals(" IS NOT NULL", condition.getRenderedEJBQL());
-        Assert.assertEquals(0, condition.getParamsToSet().size());
+        Assert.assertEquals(":qel1 IS NOT NULL", condition.getRenderedEJBQL());
+        Assert.assertEquals(1, condition.getParamsToSet().size());
 
         condition = new NotNullCondition("x");
         condition.evaluate();
-        Assert.assertEquals("x IS NOT NULL", condition.getRenderedEJBQL());
-        Assert.assertEquals(0, condition.getParamsToSet().size());
+        Assert.assertEquals(":qel1 IS NOT NULL", condition.getRenderedEJBQL());
+        Assert.assertEquals(1, condition.getParamsToSet().size());
+        Assert.assertEquals("x", condition.getParamsToSet().iterator().next().getValue());
 
         condition = new NotNullCondition(new DynamicParameter() {
             @Override
@@ -40,8 +41,9 @@ public class NotNullConditionTest {
 
         condition = new NotNullCondition(null);
         condition.evaluate();
-        Assert.assertEquals("null IS NOT NULL", condition.getRenderedEJBQL());
-        Assert.assertEquals(0, condition.getParamsToSet().size());
+        Assert.assertEquals(":qel1 IS NOT NULL", condition.getRenderedEJBQL());
+        Assert.assertEquals(1, condition.getParamsToSet().size());
+        Assert.assertNull(condition.getParamsToSet().iterator().next().getValue());
 
         condition = new NotNullCondition(new DynamicParameter() {
             @Override
@@ -51,7 +53,7 @@ public class NotNullConditionTest {
             }
         });
         condition.evaluate();
-        Assert.assertEquals("null IS NOT NULL", condition.getRenderedEJBQL());
-        Assert.assertEquals(0, condition.getParamsToSet().size());
+        Assert.assertEquals(":qel1 IS NOT NULL", condition.getRenderedEJBQL());
+        Assert.assertEquals(1, condition.getParamsToSet().size());
     }
 }
