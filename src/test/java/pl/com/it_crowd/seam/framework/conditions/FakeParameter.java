@@ -1,13 +1,13 @@
 package pl.com.it_crowd.seam.framework.conditions;
 
-public class FakeParameter implements DynamicParameter {
+public class FakeParameter<E> implements DynamicParameter<E> {
 // ------------------------------ FIELDS ------------------------------
 
-    private Object value;
+    private E value;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public FakeParameter(Object value)
+    public FakeParameter(E value)
     {
         this.value = value;
     }
@@ -15,12 +15,12 @@ public class FakeParameter implements DynamicParameter {
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     @Override
-    public Object getValue()
+    public E getValue()
     {
         return value;
     }
 
-    public void setValue(Object value)
+    public void setValue(E value)
     {
         this.value = value;
     }

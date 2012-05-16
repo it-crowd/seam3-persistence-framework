@@ -13,11 +13,11 @@ public class ReEvaluateTest {
     @Test
     public void revaluateTest()
     {
-        final FakeParameter companyIdParam = new FakeParameter(3);
+        final FakeParameter<Integer> companyIdParam = new FakeParameter<Integer>(3);
         final FreeCondition companyCondition = new FreeCondition("p.company.id=", companyIdParam);
-        final FakeParameter idParam = new FakeParameter(22);
+        final FakeParameter<Integer> idParam = new FakeParameter<Integer>(22);
         final FreeCondition idCondition = new FreeCondition(idParam, "!= id");
-        final FakeParameter nameParam = new FakeParameter("jacek");
+        final FakeParameter<String> nameParam = new FakeParameter<String>("jacek");
         final FreeCondition nameCondition = new FreeCondition(nameParam, "=p.owner.name");
         final FreeCondition roleCondition = new FreeCondition(nameParam, " in (select name from User where role=admin)");
 

@@ -137,8 +137,7 @@ public abstract class AbstractCondition {
         for (int i = 0; i < args.length; i++) {
             Object o = args[i];
             if (o instanceof DynamicParameter) {
-                LocalDynamicParameter localDynamicParameter = new LocalDynamicParameter((DynamicParameter) o,
-                    paramPrefix + (localDynP++ + paramIndexOffset),
+                LocalDynamicParameter localDynamicParameter = new LocalDynamicParameter((DynamicParameter) o, paramPrefix + (localDynP++ + paramIndexOffset),
                     ((DynamicParameter) o).getValue());
                 argValues[i] = localDynamicParameter;
                 dynamicParams.add(localDynamicParameter);
@@ -230,8 +229,11 @@ public abstract class AbstractCondition {
         public boolean isDirty()
         {
             Object freshValue = this.dynamicParameter.getValue();
-            return value == null ? (freshValue != null && (!(freshValue instanceof Collection) || !((Collection) freshValue).isEmpty())) : value.equals(
-                freshValue);
+            if (value == null) {
+                return (freshValue != null && (!(freshValue instanceof Collection) || !((Collection) freshValue).isEmpty()));
+            } else {
+                return !value.equals(freshValue);
+            }
         }
     }
 

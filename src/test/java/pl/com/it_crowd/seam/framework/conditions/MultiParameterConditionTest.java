@@ -86,8 +86,8 @@ public class MultiParameterConditionTest {
     public void multiDynamicParamTest3()
     {
         AbstractCondition condition;
-        FakeParameter currentUserParam = new FakeParameter(new User());
-        FakeParameter unlockedOnlyParam = new FakeParameter(false);
+        FakeParameter<User> currentUserParam = new FakeParameter<User>(new User());
+        FakeParameter<Boolean> unlockedOnlyParam = new FakeParameter<Boolean>(false);
 
         condition = new FreeCondition("(p.lockOwner is null or p.lockOwner.id=", currentUserParam, " or false=", unlockedOnlyParam, ")");
         condition.setParamIndexOffset(2);
