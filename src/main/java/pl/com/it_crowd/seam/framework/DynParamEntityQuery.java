@@ -94,6 +94,7 @@ public class DynParamEntityQuery<E> extends EntityQuery<E> {
     {
         if (conditions != null) {
             for (AbstractCondition condition : conditions) {
+                condition.markParametersSet();
                 if (condition.rendersEJBQL()) {
                     for (AbstractCondition.LocalDynamicParameter parameter : condition.getParamsToSet()) {
                         query.setParameter(parameter.getName(), parameter.getValue());

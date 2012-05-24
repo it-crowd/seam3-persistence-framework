@@ -19,13 +19,15 @@ public abstract class AbstractCondition {
 
     protected Set<LocalDynamicParameter> dynamicParams = new HashSet<LocalDynamicParameter>();
 
+    protected boolean includeNullParameters = false;
+
+    protected Object[] oldArgValues;
+
     protected String oldEJBQL;
 
     protected int paramIndexOffset = 1;
 
     protected String paramPrefix = "qel";
-
-    protected boolean includeNullParameters = false;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -106,16 +108,49 @@ public abstract class AbstractCondition {
 
     public boolean isDirty()
     {
+        if (oldArgValues == null || argValues == null || oldArgValues.length != argValues.length) {
+            return true;
+        }
         String renderedEJBQL = getRenderedEJBQL();
         if (oldEJBQL == null && renderedEJBQL != null || oldEJBQL != null && renderedEJBQL == null || oldEJBQL != null && !oldEJBQL.equals(renderedEJBQL)) {
             return true;
         }
-        for (AbstractCondition.LocalDynamicParameter parameter : getParamsToSet()) {
-            if (parameter.isDirty()) {
+        for (int i = 0; i < args.length; i++) {
+            Object oldArgValue = oldArgValues[i];
+            Object freshArgValue = argValues[i];
+            Object oldValue;
+            Integer oldHashCode;
+            Integer freshHashCode;
+            if (oldArgValue instanceof LocalDynamicParameter) {
+                oldValue = ((LocalDynamicParameter) oldArgValue).value;
+                oldHashCode = ((LocalDynamicParameter) oldArgValue).valueHashCode;
+            } else {
+                oldValue = oldArgValue;
+                oldHashCode = oldValue == null ? null : oldValue.hashCode();
+            }
+            Object freshValue;
+            if (freshArgValue instanceof LocalDynamicParameter) {
+                freshValue = ((LocalDynamicParameter) freshArgValue).value;
+                freshHashCode = ((LocalDynamicParameter) freshArgValue).valueHashCode;
+            } else {
+                freshValue = freshArgValue;
+                freshHashCode = freshValue == null ? null : freshValue.hashCode();
+            }
+            if (!equals(oldHashCode, freshHashCode) || !equals(oldValue, freshValue)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void markParametersSet()
+    {
+        oldArgValues = argValues;
+        for (Object arg : args) {
+            if (arg instanceof AbstractCondition) {
+                ((AbstractCondition) arg).markParametersSet();
+            }
+        }
     }
 
     /**
@@ -129,6 +164,21 @@ public abstract class AbstractCondition {
         return renderedEJBQL != null && !"".equals(renderedEJBQL.trim());
     }
 
+    @SuppressWarnings("NumberEquality")
+    private boolean equals(Integer object1, Integer object2)
+    {
+        return object1 == object2 || !((object1 == null) || (object2 == null)) && object1.equals(object2);
+    }
+
+    private boolean equals(Object oldValue, Object freshValue)
+    {
+        if (oldValue == null) {
+            return (freshValue == null || ((freshValue instanceof Collection) && !((Collection) freshValue).isEmpty()));
+        } else {
+            return oldValue.equals(freshValue);
+        }
+    }
+
     private void evaluateArgumentValues()
     {
         dynamicParams.clear();
@@ -137,7 +187,7 @@ public abstract class AbstractCondition {
         for (int i = 0; i < args.length; i++) {
             Object o = args[i];
             if (o instanceof DynamicParameter) {
-                LocalDynamicParameter localDynamicParameter = new LocalDynamicParameter((DynamicParameter) o, paramPrefix + (localDynP++ + paramIndexOffset),
+                LocalDynamicParameter localDynamicParameter = new LocalDynamicParameter(paramPrefix + (localDynP++ + paramIndexOffset),
                     ((DynamicParameter) o).getValue());
                 argValues[i] = localDynamicParameter;
                 dynamicParams.add(localDynamicParameter);
@@ -187,19 +237,24 @@ public abstract class AbstractCondition {
     public class LocalDynamicParameter {
 // ------------------------------ FIELDS ------------------------------
 
-        DynamicParameter dynamicParameter;
-
         String name;
 
         Object value;
 
+        /**
+         * This is used for collections and maps
+         */
+        Integer valueHashCode;
+
 // --------------------------- CONSTRUCTORS ---------------------------
 
-        private LocalDynamicParameter(DynamicParameter dynamicParameter, String name, Object value)
+        private LocalDynamicParameter(String name, Object value)
         {
-            this.dynamicParameter = dynamicParameter;
             this.name = name;
             this.value = value;
+            if (value != null) {
+                valueHashCode = value.hashCode();
+            }
         }
 
 // --------------------- GETTER / SETTER METHODS ---------------------
@@ -209,44 +264,9 @@ public abstract class AbstractCondition {
             return name;
         }
 
-        public void setName(String name)
-        {
-            this.name = name;
-        }
-
         public Object getValue()
         {
             return value;
-        }
-
-        public void setValue(Object value)
-        {
-            this.value = value;
-        }
-
-// -------------------------- OTHER METHODS --------------------------
-
-        public boolean isDirty()
-        {
-            Object freshValue = this.dynamicParameter.getValue();
-            if (value == null) {
-                return (freshValue != null && (!(freshValue instanceof Collection) || !((Collection) freshValue).isEmpty()));
-            } else {
-                return !value.equals(freshValue);
-            }
-        }
-    }
-
-    protected class OffsetHolder {
-// ------------------------------ FIELDS ------------------------------
-
-        int offset;
-
-// --------------------------- CONSTRUCTORS ---------------------------
-
-        public OffsetHolder(int offset)
-        {
-            this.offset = offset;
         }
     }
 }
