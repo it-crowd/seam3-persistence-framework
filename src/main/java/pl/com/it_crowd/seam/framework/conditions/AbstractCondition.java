@@ -121,20 +121,22 @@ public abstract class AbstractCondition {
             Object oldValue;
             Integer oldHashCode;
             Integer freshHashCode;
+            Object freshValue;
+            if (freshArgValue instanceof LocalDynamicParameter) {
+                freshValue = ((LocalDynamicParameter) freshArgValue).value;
+                freshHashCode = ((LocalDynamicParameter) freshArgValue).valueHashCode;
+            } else if (freshArgValue instanceof AbstractCondition) {
+                return ((AbstractCondition) freshArgValue).isDirty();
+            } else {
+                freshValue = freshArgValue;
+                freshHashCode = freshValue == null ? null : freshValue.hashCode();
+            }
             if (oldArgValue instanceof LocalDynamicParameter) {
                 oldValue = ((LocalDynamicParameter) oldArgValue).value;
                 oldHashCode = ((LocalDynamicParameter) oldArgValue).valueHashCode;
             } else {
                 oldValue = oldArgValue;
                 oldHashCode = oldValue == null ? null : oldValue.hashCode();
-            }
-            Object freshValue;
-            if (freshArgValue instanceof LocalDynamicParameter) {
-                freshValue = ((LocalDynamicParameter) freshArgValue).value;
-                freshHashCode = ((LocalDynamicParameter) freshArgValue).valueHashCode;
-            } else {
-                freshValue = freshArgValue;
-                freshHashCode = freshValue == null ? null : freshValue.hashCode();
             }
             if (!equals(oldHashCode, freshHashCode) || !equals(oldValue, freshValue)) {
                 return true;

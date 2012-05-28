@@ -2,9 +2,11 @@ package pl.com.it_crowd.seam.framework;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import pl.com.it_crowd.seam.framework.conditions.AbstractCondition;
 import pl.com.it_crowd.seam.framework.conditions.DynamicParameter;
 import pl.com.it_crowd.seam.framework.conditions.FakeParameter;
 import pl.com.it_crowd.seam.framework.conditions.FreeCondition;
+import pl.com.it_crowd.seam.framework.conditions.OrCondition;
 import pl.com.it_crowd.seam.framework.mocks.ElContextMock;
 import pl.com.it_crowd.seam.framework.mocks.ExpressionFactoryMock;
 
@@ -78,11 +80,77 @@ public class DynParamEntityQueryTest {
     }
 
     @Test
-    public void refreshOnDynamicParameterOnStrinchChange()
+    public void refreshOnDynamicParameterOnCollectionChangeInCompositeCondition()
+    {
+        final List<Integer> list = new ArrayList<Integer>();
+        final FakeParameter<List<Integer>> param = new FakeParameter<List<Integer>>(list);
+        final CustomQuery query = new CustomQuery();
+        AbstractCondition condition = new OrCondition(new FreeCondition("u.id in (", param, ")"), new FreeCondition("false"));
+        query.setConditions(Arrays.asList(condition));
+
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+
+        list.addAll(Arrays.asList(1, 2, 3));
+
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+        list.addAll(Arrays.asList(4, 5, 6));
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+    }
+
+    @Test
+    public void refreshOnDynamicParameterOnPrimitiveBooleanChangeInCompositeCondition()
+    {
+        final FakeParameter<Object> param = new FakeParameter<Object>(true);
+        final CustomQuery query = new CustomQuery();
+        AbstractCondition condition = new OrCondition(new FreeCondition("u.active  = ", param), new FreeCondition("false"));
+        query.setConditions(Arrays.asList(condition));
+
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+
+        param.setValue(false);
+
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+    }
+
+    @Test
+    public void refreshOnDynamicParameterOnStringChange()
     {
         final FakeParameter<String> param = new FakeParameter<String>("Jan");
         final CustomQuery query = new CustomQuery();
         FreeCondition condition = new FreeCondition("u.id in (", param, ")");
+        query.setConditions(Arrays.asList(condition));
+
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+
+        param.setValue("Bono");
+
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+        param.setValue("Tony");
+        Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
+        query.getResultList();
+        Assert.assertFalse("query parameters should be clean", query.isAnyParameterDirty());
+    }
+
+    @Test
+    public void refreshOnDynamicParameterOnStringChangeInCompositeCondition()
+    {
+        final FakeParameter<String> param = new FakeParameter<String>("Jan");
+        final CustomQuery query = new CustomQuery();
+        AbstractCondition condition = new OrCondition(new FreeCondition("u.id in (", param, ")"), new FreeCondition("false"));
         query.setConditions(Arrays.asList(condition));
 
         Assert.assertTrue("query parameters should be dirty", query.isAnyParameterDirty());
