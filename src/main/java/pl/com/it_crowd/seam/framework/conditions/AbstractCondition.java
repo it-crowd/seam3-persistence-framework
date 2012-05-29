@@ -126,7 +126,11 @@ public abstract class AbstractCondition {
                 freshValue = ((LocalDynamicParameter) freshArgValue).value;
                 freshHashCode = ((LocalDynamicParameter) freshArgValue).valueHashCode;
             } else if (freshArgValue instanceof AbstractCondition) {
-                return ((AbstractCondition) freshArgValue).isDirty();
+                if (((AbstractCondition) freshArgValue).isDirty()) {
+                    return true;
+                } else {
+                    continue;
+                }
             } else {
                 freshValue = freshArgValue;
                 freshHashCode = freshValue == null ? null : freshValue.hashCode();
