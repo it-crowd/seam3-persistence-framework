@@ -1,5 +1,7 @@
 package pl.com.it_crowd.seam.framework.converter;
 
+import org.jboss.solder.core.Requires;
+import org.jboss.solder.core.Veto;
 import pl.com.it_crowd.seam.framework.Identifiable;
 
 import javax.enterprise.context.RequestScoped;
@@ -8,9 +10,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+@Veto
+@Requires({"javax.persistence.EntityManager", "javax.faces.convert.Converter"})
 @RequestScoped
 @FacesConverter(value = "entityConverter")
 public class EntityConverter implements Converter {
@@ -20,7 +23,10 @@ public class EntityConverter implements Converter {
 
     private static final String TRANSIENT_ENTITY = "new";
 
-    @Inject
+    /**
+     * This is suppressed because user is supposed to set it i.e. via xml config.
+     */
+    @SuppressWarnings("UnusedDeclaration")
     private EntityManager entityManager;
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -40,6 +46,10 @@ public class EntityConverter implements Converter {
                 throw new ConverterException("Cannot instantiate new object of type " + entityClass.getCanonicalName());
             }
         } else {
+            if (entityManager == null) {
+                throw new IllegalStateException("Please configure entityConverter's entityManager");
+            }
+            //noinspection unchecked
             return entityManager.find(entityClass, Long.parseLong(value));
         }
     }
