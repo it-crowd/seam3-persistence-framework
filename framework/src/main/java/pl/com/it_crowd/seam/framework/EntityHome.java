@@ -66,9 +66,10 @@ public abstract class EntityHome<E> extends Home<EntityManager, E> {
     @Transactional
     public boolean persist()
     {
-        getEntityManager().persist(getInstance());
-        getEntityManager().flush();
-        assignId(persistenceProvider.get().getId(getInstance(), getEntityManager()));
+        final EntityManager entityManager = getEntityManager();
+        entityManager.persist(getInstance());
+        entityManager.flush();
+        assignId(persistenceProvider.get().getId(getInstance(), entityManager));
         beanManager.fireEvent(getInstance(), new AnnotationLiteral<EntityPersisted>() {
         });
         return true;
@@ -77,8 +78,9 @@ public abstract class EntityHome<E> extends Home<EntityManager, E> {
     @Transactional
     public boolean remove()
     {
-        getEntityManager().remove(getInstance());
-        getEntityManager().flush();
+        final EntityManager entityManager = getEntityManager();
+        entityManager.remove(getInstance());
+        entityManager.flush();
         beanManager.fireEvent(getInstance(), new AnnotationLiteral<EntityRemoved>() {
         });
         return true;
@@ -88,7 +90,9 @@ public abstract class EntityHome<E> extends Home<EntityManager, E> {
     public boolean update()
     {
         joinTransaction();
-        getEntityManager().flush();
+        final EntityManager entityManager = getEntityManager();
+        setInstance(entityManager.merge(getInstance()));
+        entityManager.flush();
         beanManager.fireEvent(getInstance(), new AnnotationLiteral<EntityUpdated>() {
         });
         return true;
