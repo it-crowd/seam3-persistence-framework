@@ -1,8 +1,10 @@
 package pl.com.it_crowd.seam.framework;
 
+import org.jboss.seam.persistence.ManagedPersistenceContext;
 import org.jboss.seam.persistence.SeamPersistenceProvider;
 import org.jboss.seam.transaction.Transactional;
 
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
@@ -26,6 +28,10 @@ public abstract class EntityHome<E> extends Home<EntityManager, E> {
 
     @Inject
     protected Instance<SeamPersistenceProvider> persistenceProvider;
+
+    @Inject
+    @Any
+    private Instance<ManagedPersistenceContext> managedPersistenceContexts;
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -69,7 +75,13 @@ public abstract class EntityHome<E> extends Home<EntityManager, E> {
         final EntityManager entityManager = getEntityManager();
         entityManager.persist(getInstance());
         entityManager.flush();
-        assignId(persistenceProvider.get().getId(getInstance(), entityManager));
+        for (ManagedPersistenceContext context : managedPersistenceContexts) {
+            final Object id = context.getProvider().getId(getInstance(), getEntityManager());
+            if (id != null) {
+                assignId(id);
+                break;
+            }
+        }
         beanManager.fireEvent(getInstance(), new AnnotationLiteral<EntityPersisted>() {
         });
         return true;
