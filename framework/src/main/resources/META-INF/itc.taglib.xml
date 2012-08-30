@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0"
+                xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd" id="a4j">
+    <namespace>http://it-crowd.com.pl/jsf</namespace>
+    <tag>
+        <tag-name>convertEntity</tag-name>
+        <converter>
+            <converter-id>pl.com.it_crowd.seam.framework.converter.Entity</converter-id>
+            <handler-class>pl.com.it_crowd.seam.framework.converter.EntityConverterHandler</handler-class>
+        </converter>
+        <attribute>
+            <description>String represenation of transient (with null id) entity</description>
+            <name>transientEntity</name>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>String representaion of null value</description>
+            <name>nullEntity</name>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <description>EntityManager to use for retriving entities from DB</description>
+            <name>entityManager</name>
+            <type>javax.persistence.EntityManager</type>
+        </attribute>
+    </tag>
+</facelet-taglib>
+

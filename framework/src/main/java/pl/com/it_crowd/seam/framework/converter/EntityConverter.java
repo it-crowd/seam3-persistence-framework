@@ -2,7 +2,6 @@ package pl.com.it_crowd.seam.framework.converter;
 
 import org.jboss.solder.core.Requires;
 import org.jboss.solder.core.Veto;
-import pl.com.it_crowd.seam.framework.Identifiable;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.component.UIComponent;
@@ -15,19 +14,54 @@ import javax.persistence.EntityManager;
 @Veto
 @Requires({"javax.persistence.EntityManager", "javax.faces.convert.Converter"})
 @RequestScoped
-@FacesConverter(value = "entityConverter")
+@FacesConverter(value = "pl.com.it_crowd.seam.framework.converter.Entity")
 public class EntityConverter implements Converter {
 // ------------------------------ FIELDS ------------------------------
 
-    private static final String NULL_ENTITY = "null";
+    private static final String NULL_ENTITY = "";
 
     private static final String TRANSIENT_ENTITY = "new";
 
     /**
-     * This is suppressed because user is supposed to set it i.e. via xml config.
+     * User may set it i.e. via xml config or convertEntity tag.
      */
-    @SuppressWarnings("UnusedDeclaration")
     private EntityManager entityManager;
+
+    private String nullEntity = NULL_ENTITY;
+
+    private String transientEntity = TRANSIENT_ENTITY;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    public EntityManager getEntityManager()
+    {
+        return entityManager;
+    }
+
+    public void setEntityManager(EntityManager entityManager)
+    {
+        this.entityManager = entityManager;
+    }
+
+    public String getNullEntity()
+    {
+        return nullEntity;
+    }
+
+    public void setNullEntity(String nullEntity)
+    {
+        this.nullEntity = nullEntity;
+    }
+
+    public String getTransientEntity()
+    {
+        return transientEntity;
+    }
+
+    public void setTransientEntity(String transientEntity)
+    {
+        this.transientEntity = transientEntity;
+    }
 
 // ------------------------ INTERFACE METHODS ------------------------
 
@@ -37,9 +71,9 @@ public class EntityConverter implements Converter {
     public Object getAsObject(FacesContext context, UIComponent component, String value)
     {
         Class entityClass = getEntityClass(context, component);
-        if (NULL_ENTITY.equals(value)) {
+        if (nullEntity.equals(value)) {
             return null;
-        } else if (TRANSIENT_ENTITY.equals(value)) {
+        } else if (transientEntity.equals(value)) {
             try {
                 return entityClass.newInstance();
             } catch (Exception e) {
@@ -57,13 +91,13 @@ public class EntityConverter implements Converter {
     public String getAsString(FacesContext context, UIComponent component, Object value)
     {
         if (value == null) {
-            return NULL_ENTITY;
+            return nullEntity;
         }
-        if (!(value instanceof Identifiable)) {
+        if (!(value instanceof pl.com.it_crowd.seam.framework.Identifiable)) {
             throw new ConverterException(String.format("Class %s doesn't implemente Indentifiable<Long> interface", value.getClass()));
         }
-        Object id = ((Identifiable) value).getId();
-        return id == null ? TRANSIENT_ENTITY : id.toString();
+        Object id = ((pl.com.it_crowd.seam.framework.Identifiable) value).getId();
+        return id == null ? transientEntity : id.toString();
     }
 
     protected Class getEntityClass(FacesContext context, UIComponent component)
