@@ -18,9 +18,9 @@ import javax.persistence.EntityManager;
 public class EntityConverter implements Converter {
 // ------------------------------ FIELDS ------------------------------
 
-    private static final String NULL_ENTITY = "";
+    public static final String NULL_ENTITY = "";
 
-    private static final String TRANSIENT_ENTITY = "new";
+    public static final String TRANSIENT_ENTITY = "new";
 
     /**
      * User may set it i.e. via xml config or convertEntity tag.
@@ -90,10 +90,12 @@ public class EntityConverter implements Converter {
 
     public String getAsString(FacesContext context, UIComponent component, Object value)
     {
-        if (value == null) {
+        if (value == null || nullEntity.equals(value)) {
             return nullEntity;
         }
-        if (!(value instanceof pl.com.it_crowd.seam.framework.Identifiable)) {
+        if (transientEntity.equals(value)) {
+            return transientEntity;
+        } else if (!(value instanceof pl.com.it_crowd.seam.framework.Identifiable)) {
             throw new ConverterException(String.format("Class %s doesn't implemente Indentifiable<Long> interface", value.getClass()));
         }
         Object id = ((pl.com.it_crowd.seam.framework.Identifiable) value).getId();
