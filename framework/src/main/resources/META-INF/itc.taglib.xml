@@ -6,7 +6,7 @@
         <tag-name>convertEntity</tag-name>
         <converter>
             <converter-id>pl.com.it_crowd.seam.framework.converter.Entity</converter-id>
-            <handler-class>pl.com.it_crowd.seam.framework.converter.EntityConverterHandler</handler-class>
+            <handler-class>pl.itcrowd.seam3.persistence.converter.EntityConverterHandler</handler-class>
         </converter>
         <attribute>
             <description>String represenation of transient (with null id) entity</description>
