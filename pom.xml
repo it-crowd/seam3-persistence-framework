@@ -56,6 +56,6 @@
     </distributionManagement>
 
     <scm>
-        <developerConnection>scm:svn:https://it-crowd.com.pl/svn/seam3-persistence-framework/trunk</developerConnection>
+        <developerConnection>scm:git:https://github.com/it-crowd/seam3-persistence-framework.git</developerConnection>
     </scm>
 </project>
