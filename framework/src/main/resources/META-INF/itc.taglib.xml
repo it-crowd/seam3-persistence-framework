@@ -23,6 +23,11 @@
             <name>entityManager</name>
             <type>javax.persistence.EntityManager</type>
         </attribute>
+        <attribute>
+            <description>Fully qualified name for entity class (optional). Useful in case of collections</description>
+            <name>targetEntityClass</name>
+            <type>java.lang.String</type>
+        </attribute>
     </tag>
 </facelet-taglib>
 

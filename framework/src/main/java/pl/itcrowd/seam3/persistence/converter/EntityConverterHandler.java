@@ -16,6 +16,8 @@ public class EntityConverterHandler extends ConverterHandler {
 
     private final TagAttribute transientEntity;
 
+    private final TagAttribute targetEntityClass;
+
 // --------------------------- CONSTRUCTORS ---------------------------
 
     public EntityConverterHandler(ConverterConfig config)
@@ -24,6 +26,7 @@ public class EntityConverterHandler extends ConverterHandler {
         this.entityManager = this.getAttribute("entityManager");
         this.transientEntity = this.getAttribute("transientEntity");
         this.nullEntity = this.getAttribute("nullEntity");
+        this.targetEntityClass = this.getAttribute("targetEntityClass");
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -46,6 +49,9 @@ public class EntityConverterHandler extends ConverterHandler {
         }
         if (this.entityManager != null) {
             converter.setEntityManager((EntityManager) this.entityManager.getObject(ctx));
+        }
+        if (this.targetEntityClass != null) {
+            converter.setTargetEntityClass(this.targetEntityClass.getValue(ctx));
         }
     }
 }

@@ -32,6 +32,8 @@ public class EntityConverter implements Converter {
 
     private String transientEntity = TRANSIENT_ENTITY;
 
+    private String targetEntityClass;
+
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     public EntityManager getEntityManager()
@@ -64,14 +66,34 @@ public class EntityConverter implements Converter {
         this.transientEntity = transientEntity;
     }
 
-// ------------------------ INTERFACE METHODS ------------------------
+    public String getTargetEntityClass()
+    {
+        return targetEntityClass;
+    }
+
+    public void setTargetEntityClass(String targetEntityClass)
+    {
+        this.targetEntityClass = targetEntityClass;
+    }
+
+    // ------------------------ INTERFACE METHODS ------------------------
 
 
 // --------------------- Interface Converter ---------------------
 
     public Object getAsObject(FacesContext context, UIComponent component, String value)
     {
-        Class entityClass = getEntityClass(context, component);
+        Class entityClass;
+        if (targetEntityClass != null) {
+            try {
+                entityClass = Class.forName(targetEntityClass);
+            } catch (ClassNotFoundException e) {
+                throw new ConverterException("Cannot found target entity class for name " + targetEntityClass);
+            }
+        } else {
+            entityClass = getEntityClass(context, component);
+        }
+
         if (nullEntity.equals(value)) {
             return null;
         } else if (transientEntity.equals(value)) {
